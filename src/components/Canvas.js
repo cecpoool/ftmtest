@@ -53,16 +53,13 @@ class Canvas extends React.Component {
 
   render() {
     return (
-      <div>
-        <canvas
-          id="canvas"
-          ref="canvas"
-          className="can1"
-          width={640}
-          height={425}
-          padding={60}
-        />
-      </div>
+      <canvas
+        id="canvas"
+        ref="canvas"
+        className="can1"
+        width={640}
+        height={425}
+      />
     );
   }
 }

@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import Canvas from "./components/Canvas";
-import { BrowserRouter as Router } from "react-router-dom";
 
 class App extends React.Component {
   constructor() {
@@ -13,6 +12,12 @@ class App extends React.Component {
     this.setState({ currentDrawing: e.target.value });
   };
 
+  newDrawing = e => {
+    var finished = document.getElementById("canvas");
+    const context = finished.getContext("2d");
+    context.clearRect(0, 0, finished.width, finished.height);
+  };
+
   saveDrawing = e => {
     var finished = document.getElementById("canvas");
     const context = finished.getContext("2d");
@@ -22,8 +27,7 @@ class App extends React.Component {
       {
         drawings: this.state.drawings.push({
           src: saved,
-          name: this.state.currentDrawing,
-          key: this.state.drawings.Length + 1
+          name: this.state.currentDrawing
         })
       }
     ]);
@@ -33,12 +37,13 @@ class App extends React.Component {
     return this.setState.drawings;
   };
 
-  openDrawing(select) {
+  openDrawing(index) {
     var finished = document.getElementById("canvas");
     const context = finished.getContext("2d");
-
+    context.clearRect(0, 0, finished.width, finished.height);
+    console.log(index);
     var image = new Image();
-    image.src = select.src;
+    image.src = this.state.drawings[index].src;
     image.onload = function() {
       context.drawImage(image, 0, 0);
     };
@@ -46,36 +51,31 @@ class App extends React.Component {
 
   render() {
     const drawingList = this.state.drawings.map((sheet, index) => (
-      <li key={sheet.name + (index + 1)}>{sheet.name}</li>
+      <li
+        className="listDrawings"
+        onClick={() => this.openDrawing(index)}
+        key={sheet.name + (index + 1)}
+      >
+        {sheet.name}
+      </li>
     ));
-
-    let listItems = document.getElementsByTagName("li");
-
-    for (var i = 0; i < listItems.length; i++) {
-      var item = listItems[i];
-      item.onclick = this.openDrawing(item);
-    }
 
     return (
       <div className="row">
         <div className="sidenav">
+          <button onClick={this.newDrawing}>New Drawing</button>
+          <p></p>
+          <input
+            className="DrawingName"
+            type="text"
+            name="Name"
+            value={this.state.currentDrawing}
+            onChange={this.handleInput}
+            width="200"
+          ></input>
           <button onClick={this.saveDrawing}>Save</button>
-          <ul padding="20">
-            <li>New Drawing</li>
-            <input
-              className="DrawingName"
-              type="text"
-              name="Name"
-              value={this.state.currentDrawing}
-              onChange={this.handleInput}
-            ></input>
-            {drawingList}
-          </ul>
+          <ul>{drawingList}</ul>
         </div>
-        <Router>
-          <div className="Navigation"></div>
-        </Router>
-
         <Canvas></Canvas>
       </div>
     );
