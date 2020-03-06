@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Canvas from "./components/Canvas";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 
 class App extends React.Component {
   constructor() {
@@ -14,21 +14,47 @@ class App extends React.Component {
   };
 
   saveDrawing = e => {
-    this.setState.drawings.push({
-      src: <Canvas />,
-      name: this.State.currentDrawing,
-      key: this.State.drawings.Length + 1
-    });
-    //
+    var finished = document.getElementById("canvas");
+    const context = finished.getContext("2d");
+    var saved = finished.toDataURL("image/png");
+
+    this.setState([
+      {
+        drawings: this.state.drawings.push({
+          src: saved,
+          name: this.state.currentDrawing,
+          key: this.state.drawings.Length + 1
+        })
+      }
+    ]);
+    context.clearRect(0, 0, finished.width, finished.height);
     console.log(this.state.currentDrawing);
     console.log(this.state.drawings);
     return this.setState.drawings;
   };
 
+  openDrawing(select) {
+    var finished = document.getElementById("canvas");
+    const context = finished.getContext("2d");
+
+    var image = new Image();
+    image.src = select.src;
+    image.onload = function() {
+      context.drawImage(image, 0, 0);
+    };
+  }
+
   render() {
     const drawingList = this.state.drawings.map((sheet, index) => (
       <li key={sheet.name + (index + 1)}>{sheet.name}</li>
     ));
+
+    let listItems = document.getElementsByTagName("li");
+
+    for (var i = 0; i < listItems.length; i++) {
+      var item = listItems[i];
+      item.onclick = this.openDrawing(item);
+    }
 
     return (
       <div className="row">

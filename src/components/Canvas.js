@@ -5,6 +5,8 @@ class Canvas extends React.Component {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext("2d");
 
+    //I used the Canvas docs from MDN to help with this part. I feel comfortable about all the code I used except clientx and clienty
+    //- which i assume is mouse co-ords but not 100%
     function drawingEvent(ev) {
       let isDrawing = false;
       let x = 0;
@@ -53,6 +55,7 @@ class Canvas extends React.Component {
     return (
       <div>
         <canvas
+          id="canvas"
           ref="canvas"
           className="can1"
           width={640}
