@@ -5,24 +5,38 @@ import Canvas from "./components/Canvas";
 class App extends React.Component {
   constructor() {
     super();
-    this.state = { drawings: [], currentDrawing: "" };
+    this.state = {
+      drawings: [],
+      currentDrawing: "",
+      canvDraw: null,
+      context: null
+    };
+  }
+
+  //CLEANUP: cleaned up by popping some multiple use variables into state and setting this in componentDidMount
+  //if I'd had time I might have added context and just pulled these canvas vars from the CANVAS component.
+
+  componentDidMount() {
+    this.setState.canvDraw = document.getElementById("canvas");
+    this.setState.context = this.setState.canvDraw.getContext("2d");
   }
 
   handleInput = e => {
     this.setState({ currentDrawing: e.target.value });
   };
 
-  newDrawing = e => {
-    var finished = document.getElementById("canvas");
-    const context = finished.getContext("2d");
-    context.clearRect(0, 0, finished.width, finished.height);
+  //CLEANUP: realised I could just use this function within the other ones
+  clearDrawing = e => {
+    this.setState.context.clearRect(
+      0,
+      0,
+      this.setState.canvDraw.width,
+      this.setState.canvDraw.height
+    );
   };
 
   saveDrawing = e => {
-    var finished = document.getElementById("canvas");
-    const context = finished.getContext("2d");
-    var saved = finished.toDataURL("image/png");
-
+    var saved = this.setState.canvDraw.toDataURL("image/png");
     this.setState([
       {
         drawings: this.state.drawings.push({
@@ -31,17 +45,15 @@ class App extends React.Component {
         })
       }
     ]);
-    context.clearRect(0, 0, finished.width, finished.height);
-    console.log(this.state.currentDrawing);
-    console.log(this.state.drawings);
+    this.clearDrawing();
     return this.setState.drawings;
   };
 
+  //I seem to need to reset the context for this function which makes sense
+  //got rid of the console.logs
   openDrawing(index) {
-    var finished = document.getElementById("canvas");
-    const context = finished.getContext("2d");
-    context.clearRect(0, 0, finished.width, finished.height);
-    console.log(index);
+    let context = this.setState.canvDraw.getContext("2d");
+    this.clearDrawing();
     var image = new Image();
     image.src = this.state.drawings[index].src;
     image.onload = function() {
@@ -63,7 +75,7 @@ class App extends React.Component {
     return (
       <div className="row">
         <div className="sidenav">
-          <button onClick={this.newDrawing}>New Drawing</button>
+          <button onClick={this.clearDrawing}>New Drawing</button>
           <p></p>
           <input
             className="DrawingName"
